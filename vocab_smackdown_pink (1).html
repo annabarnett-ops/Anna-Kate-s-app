@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vocab Smackdown ✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink:        #F9A8C9;
+    --pink-light:  #FDE8F2;
+    --pink-deep:   #E8709A;
+    --teal:        #6ECFCF;
+    --teal-light:  #DDF5F5;
+    --teal-deep:   #3AADAD;
+    --cream:       #FFFAF8;
+    --white:       #FFFFFF;
+    --text-dark:   #3A2D35;
+    --text-mid:    #7A6575;
+    --text-light:  #B8A8B2;
+    --gold:        #F5C842;
+    --gold-light:  #FDF3CC;
+    --correct:     #5ECFB0;
+    --wrong:       #F07090;
+    --shadow-pink: rgba(249,168,201,0.35);
+    --shadow-teal: rgba(110,207,207,0.30);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><text y='16' font-size='16'>✨</text></svg>") 8 8, auto;
+  }
+
+  /* ── Soft gradient background ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 15%, rgba(249,168,201,0.22) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 85%, rgba(110,207,207,0.20) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 10%, rgba(245,200,66,0.10) 0%, transparent 40%),
+      radial-gradient(ellipse at 10% 90%, rgba(110,207,207,0.12) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Dot texture ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(249,168,201,0.25) 1.5px, transparent 1.5px);
+    background-size: 28px 28px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Floating background blobs ── */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 0;
+    animation: blobDrift 12s ease-in-out infinite alternate;
+  }
+  .blob-1 { width: 380px; height: 380px; background: rgba(249,168,201,0.18); top: -100px; left: -100px; animation-delay: 0s; }
+  .blob-2 { width: 320px; height: 320px; background: rgba(110,207,207,0.16); bottom: -80px; right: -80px; animation-delay: -4s; }
+  .blob-3 { width: 240px; height: 240px; background: rgba(245,200,66,0.10); top: 40%; left: 60%; animation-delay: -8s; }
+
+  @keyframes blobDrift {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(30px, 20px) scale(1.08); }
+  }
+
+  /* ── Screen manager ── */
+  .screen {
+    display: none;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    padding: 0 20px 100px;
+  }
+  .screen.active { display: flex; flex-direction: column; align-items: center; }
+
+  /* ============================================================
+     TITLE SCREEN
+  ============================================================ */
+  #screen-title {
+    justify-content: center;
+    text-align: center;
+    gap: 0;
+  }
+
+  .title-deco {
+    font-size: 28px;
+    letter-spacing: 0.2em;
+    margin-bottom: 6px;
+    animation: float 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes float {
+    from { transform: translateY(0px); }
+    to   { transform: translateY(-8px); }
+  }
+
+  .title-main {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(58px, 11vw, 120px);
+    line-height: 0.88;
+    background: linear-gradient(135deg, var(--pink-deep) 0%, var(--pink) 40%, var(--teal) 75%, var(--teal-deep) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(2px 3px 0 rgba(249,168,201,0.4));
+    margin-bottom: 6px;
+  }
+
+  .title-tag {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: clamp(13px, 2.2vw, 18px);
+    color: var(--teal-deep);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .creator-ribbon {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--pink-light), var(--teal-light));
+    border: 2px solid var(--pink);
+    border-radius: 50px;
+    padding: 8px 24px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-mid);
+    margin-bottom: 36px;
+    box-shadow: 0 4px 16px var(--shadow-pink);
+  }
+  .creator-ribbon strong { color: var(--pink-deep); }
+
+  /* Instructions card */
+  .card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 30px 36px;
+    box-shadow: 0 8px 40px var(--shadow-pink), 0 2px 8px rgba(0,0,0,0.04);
+    border: 2px solid var(--pink-light);
+    position: relative;
+  }
+
+  .card-label {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 19px;
+    color: var(--pink-deep);
+    text-align: center;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .instructions-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    text-align: left;
+    max-width: 500px;
+  }
+
+  .instructions-list li {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text-mid);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+
+  .li-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink), var(--teal));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: white;
+    font-weight: 900;
+  }
+
+  .win-pill {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold-light), #fff9e0);
+    border: 2px solid var(--gold);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #9A7A10;
+    margin-top: 14px;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: 0.06em;
+    color: white;
+    background: linear-gradient(135deg, var(--pink-deep) 0%, #d45e90 50%, var(--teal-deep) 100%);
+    background-size: 200% 200%;
+    border: none;
+    border-radius: 50px;
+    padding: 16px 52px;
+    cursor: pointer;
+    box-shadow: 0 6px 24px var(--shadow-pink), 0 2px 6px rgba(0,0,0,0.08);
+    transition: all 0.25s ease;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+    border-radius: 50px;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 12px 36px var(--shadow-pink), 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .btn-primary:active { transform: translateY(0) scale(0.99); }
+
+  .btn-outline {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    color: var(--teal-deep);
+    background: white;
+    border: 2.5px solid var(--teal);
+    border-radius: 50px;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .btn-outline:hover {
+    background: var(--teal-light);
+    border-color: var(--teal-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-teal);
+  }
+
+  /* ============================================================
+     GAME SCREEN
+  ============================================================ */
+  #screen-game {
+    padding-top: 24px;
+    justify-content: flex-start;
+    gap: 0;
+  }
+
+  .game-header {
+    width: 100%;
+    max-width: 740px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .game-logo {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 22px;
+    background: linear-gradient(135deg, var(--pink-deep), var(--teal-deep));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .lives-display {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .life-icon {
+    font-size: 22px;
+    transition: all 0.3s ease;
+  }
+
+  .life-icon.lost {
+    filter: grayscale(1) opacity(0.25);
+    transform: scale(0.75);
+  }
+
+  .progress-badge {
+    background: linear-gradient(135deg, var(--pink-light), var(--teal-light));
+    border: 2px solid var(--pink);
+    border-radius: 50px;
+    padding: 5px 16px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-mid);
+    letter-spacing: 0.05em;
+  }
+
+  /* Power bar */
+  .power-bar-wrapper {
+    width: 100%;
+    max-width: 740px;
+    margin-bottom: 20px;
+  }
+
+  .power-bar-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-light);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .power-bar-label span:last-child { color: var(--pink-deep); }
+
+  .power-bar-track {
+    height: 10px;
+    background: var(--pink-light);
+    border-radius: 50px;
+    overflow: hidden;
+    border: 1.5px solid rgba(249,168,201,0.5);
+  }
+
+  .power-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pink), var(--teal));
+    border-radius: 50px;
+    transition: width 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    box-shadow: 0 0 10px rgba(110,207,207,0.5);
+  }
+
+  /* Question card */
+  .question-card {
+    width: 100%;
+    max-width: 740px;
+    background: var(--white);
+    border-radius: 20px;
+    border: 2.5px solid var(--pink-light);
+    box-shadow: 0 8px 32px var(--shadow-pink), 0 2px 6px rgba(0,0,0,0.03);
+    padding: 28px 32px;
+    margin-bottom: 18px;
+    animation: cardPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--pink), var(--teal));
+    border-radius: 20px 20px 0 0;
+  }
+
+  @keyframes cardPop {
+    from { opacity: 0; transform: scale(0.94) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .q-eyebrow {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--teal-deep);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .q-eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1.5px;
+    background: linear-gradient(90deg, var(--teal-light), transparent);
+    border-radius: 2px;
+  }
+
+  .question-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(17px, 2.6vw, 22px);
+    color: var(--text-dark);
+    line-height: 1.65;
+  }
+
+  /* Choices */
+  .choices-grid {
+    width: 100%;
+    max-width: 740px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 520px) {
+    .choices-grid { grid-template-columns: 1fr; }
+    .title-main { font-size: 56px; }
+    .card { padding: 22px 18px; }
+    .modal-content { padding: 40px 18px 80px; }
+  }
+
+  .choice-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    background: var(--white);
+    border: 2.5px solid rgba(249,168,201,0.4);
+    border-radius: 14px;
+    padding: 16px 18px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.18s ease;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    line-height: 1.4;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .choice-key {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--pink-light), var(--teal-light));
+    border: 1.5px solid var(--pink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--pink-deep);
+    flex-shrink: 0;
+    margin-top: 1px;
+    letter-spacing: 0;
+  }
+
+  .choice-btn:hover:not(:disabled) {
+    border-color: var(--pink);
+    background: var(--pink-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-pink);
+  }
+
+  .choice-btn.correct {
+    border-color: var(--correct) !important;
+    background: rgba(94,207,176,0.1) !important;
+    box-shadow: 0 6px 24px rgba(94,207,176,0.25) !important;
+    animation: correctBounce 0.35s ease !important;
+  }
+
+  .choice-btn.wrong {
+    border-color: var(--wrong) !important;
+    background: rgba(240,112,144,0.08) !important;
+    box-shadow: 0 4px 18px rgba(240,112,144,0.2) !important;
+    animation: wobble 0.4s ease !important;
+  }
+
+  .choice-btn.reveal {
+    border-color: var(--correct) !important;
+    background: rgba(94,207,176,0.06) !important;
+    opacity: 0.65;
+  }
+
+  .choice-btn:disabled { cursor: default; }
+
+  @keyframes correctBounce {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.04); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes wobble {
+    0%,100% { transform: translateX(0); }
+    20%     { transform: translateX(-7px); }
+    40%     { transform: translateX(7px); }
+    60%     { transform: translateX(-4px); }
+    80%     { transform: translateX(4px); }
+  }
+
+  /* Feedback */
+  .feedback-msg {
+    width: 100%;
+    max-width: 740px;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 20px;
+    text-align: center;
+    height: 32px;
+    transition: all 0.2s;
+  }
+
+  .feedback-msg.correct { color: var(--correct); }
+  .feedback-msg.wrong   { color: var(--wrong); }
+
+  /* Next button */
+  .next-area {
+    width: 100%;
+    max-width: 740px;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  .btn-next {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    color: white;
+    background: linear-gradient(135deg, var(--teal-deep), var(--teal));
+    border: none;
+    border-radius: 50px;
+    padding: 12px 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    display: none;
+    box-shadow: 0 6px 20px var(--shadow-teal);
+  }
+
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 10px 28px var(--shadow-teal); }
+  .btn-next.visible { display: block; animation: fadeUp 0.3s ease; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============================================================
+     WIN SCREEN
+  ============================================================ */
+  #screen-win {
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px 100px;
+    gap: 20px;
+  }
+
+  .win-sparkles { font-size: 48px; animation: float 2s ease-in-out infinite alternate; display: block; }
+
+  .win-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(48px, 9vw, 96px);
+    background: linear-gradient(135deg, var(--pink-deep), var(--gold), var(--teal-deep));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    animation: shimmer 2.5s ease-in-out infinite alternate;
+    filter: drop-shadow(0 2px 8px rgba(249,168,201,0.4));
+  }
+
+  @keyframes shimmer {
+    from { filter: drop-shadow(0 2px 8px rgba(249,168,201,0.3)); }
+    to   { filter: drop-shadow(0 4px 20px rgba(249,168,201,0.7)); }
+  }
+
+  .win-sub {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal-deep);
+  }
+
+  .win-score-card {
+    background: white;
+    border-radius: 20px;
+    border: 2.5px solid var(--pink);
+    padding: 24px 52px;
+    box-shadow: 0 10px 40px var(--shadow-pink);
+  }
+
+  .win-score-num {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: 64px;
+    background: linear-gradient(135deg, var(--pink-deep), var(--teal-deep));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  .win-score-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-top: 4px;
+  }
+
+  .win-msg {
+    max-width: 420px;
+    font-size: 15px;
+    color: var(--text-mid);
+    line-height: 1.7;
+    font-weight: 600;
+  }
+
+  /* ============================================================
+     GAME OVER SCREEN
+  ============================================================ */
+  #screen-gameover {
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px 100px;
+    gap: 20px;
+  }
+
+  .over-emoji { font-size: 64px; animation: sadBob 1.4s ease-in-out infinite alternate; display: block; }
+  @keyframes sadBob {
+    from { transform: rotate(-6deg) translateY(0); }
+    to   { transform: rotate(6deg) translateY(-6px); }
+  }
+
+  .over-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(40px, 8vw, 80px);
+    color: var(--wrong);
+    filter: drop-shadow(0 3px 10px rgba(240,112,144,0.3));
+    line-height: 1;
+  }
+
+  /* ============================================================
+     FOOTER
+  ============================================================ */
+  .page-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 14px 20px;
+    background: linear-gradient(transparent, rgba(255,250,248,0.97));
+    z-index: 10;
+  }
+
+  .built-link {
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-light);
+    background: none;
+    border: none;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 1.5px solid transparent;
+    padding-bottom: 2px;
+  }
+
+  .built-link:hover {
+    color: var(--pink-deep);
+    border-bottom-color: var(--pink);
+  }
+
+  /* ============================================================
+     MODAL
+  ============================================================ */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 248, 252, 0.97);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    overflow-y: auto;
+    animation: modalFade 0.3s ease;
+  }
+
+  .modal-overlay.open { display: block; }
+
+  @keyframes modalFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .modal-content {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 60px 40px 120px;
+  }
+
+  .modal-close-btn {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--text-mid);
+    background: white;
+    border: 2px solid var(--pink-light);
+    border-radius: 50px;
+    padding: 8px 20px;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px var(--shadow-pink);
+    text-transform: uppercase;
+  }
+
+  .modal-close-btn:hover {
+    border-color: var(--pink);
+    color: var(--pink-deep);
+    transform: translateY(-1px);
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(30px, 6vw, 56px);
+    background: linear-gradient(135deg, var(--pink-deep), var(--teal-deep));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 6px;
+    line-height: 1.1;
+  }
+
+  .modal-byline {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--pink-light);
+  }
+
+  .modal-byline strong { color: var(--pink-deep); }
+
+  .modal-section { margin-bottom: 28px; }
+
+  .modal-section h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--teal-deep);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .modal-section h3::before {
+    content: '';
+    width: 20px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--pink), var(--teal));
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  .modal-section p {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-mid);
+    line-height: 1.85;
+  }
+
+  .modal-section p + p { margin-top: 10px; }
+
+  .modal-section code {
+    background: var(--pink-light);
+    border: 1px solid var(--pink);
+    color: var(--pink-deep);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  .tech-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .tech-pill {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    padding: 6px 16px;
+    border-radius: 50px;
+    text-transform: uppercase;
+  }
+
+  .pill-pink { background: var(--pink-light); color: var(--pink-deep); border: 1.5px solid var(--pink); }
+  .pill-teal { background: var(--teal-light); color: var(--teal-deep); border: 1.5px solid var(--teal); }
+  .pill-gold { background: var(--gold-light); color: #8A7010; border: 1.5px solid var(--gold); }
+
+  .modal-divider {
+    text-align: center;
+    font-size: 18px;
+    letter-spacing: 0.4em;
+    margin: 20px 0;
+    opacity: 0.4;
+  }
+
+  /* ── Particles ── */
+  .particle-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    animation: particleFly 1s ease-out forwards;
+  }
+
+  @keyframes particleFly {
+    0%   { transform: translate(0,0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) scale(0.2); opacity: 0; }
+  }
+
+  /* ── Floating sparkles on title screen ── */
+  .sparkle-float {
+    position: absolute;
+    pointer-events: none;
+    font-size: 18px;
+    animation: sparkleDrift linear infinite;
+    opacity: 0.5;
+  }
+
+  @keyframes sparkleDrift {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.4; }
+    100% { transform: translateY(-100px) rotate(180deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Background blobs -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<!-- Particle layer -->
+<div class="particle-layer" id="particles"></div>
+
+<!-- Footer -->
+<div class="page-footer">
+  <button class="built-link" onclick="openModal()">✨ Read How I Built This ✨</button>
+</div>
+
+<!-- ============================================================
+     TITLE SCREEN
+============================================================ -->
+<div class="screen active" id="screen-title">
+
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:0;padding:40px 0 100px;position:relative;">
+
+    <!-- Floating sparkles (decorative) -->
+    <span class="sparkle-float" style="left:8%;top:20%;animation-duration:6s;animation-delay:0s;">🌸</span>
+    <span class="sparkle-float" style="left:88%;top:25%;animation-duration:7s;animation-delay:-2s;">✨</span>
+    <span class="sparkle-float" style="left:15%;top:65%;animation-duration:5s;animation-delay:-1s;">💫</span>
+    <span class="sparkle-float" style="left:80%;top:70%;animation-duration:8s;animation-delay:-3s;">🌸</span>
+    <span class="sparkle-float" style="left:50%;top:10%;animation-duration:6.5s;animation-delay:-4s;font-size:14px;">⭐</span>
+
+    <div class="title-deco">🌸 ✨ 🌸</div>
+    <div class="title-main">Vocab</div>
+    <div class="title-main" style="margin-bottom:10px;">Smackdown</div>
+    <div class="title-tag">Coding Vocabulary Edition</div>
+
+    <div class="creator-ribbon">
+      🎀 Created by <strong>Anna Katherine Barnett</strong> 🎀
+    </div>
+
+    <div class="card" style="max-width:560px;width:100%;margin-bottom:32px;">
+      <div class="card-label">🌺 How to Play 🌺</div>
+      <ul class="instructions-list">
+        <li>
+          <span class="li-dot">1</span>
+          <span>You'll be shown a definition. Your job: pick the correct vocab term from 4 choices!</span>
+        </li>
+        <li>
+          <span class="li-dot">2</span>
+          <span>15 words stand between you and vocabulary glory. Take them all down!</span>
+        </li>
+        <li>
+          <span class="li-dot">3</span>
+          <span>You have <strong style="color:var(--pink-deep)">3 lives 🌸</strong>. Each wrong answer costs one — don't lose them all!</span>
+        </li>
+        <li>
+          <span class="li-dot">4</span>
+          <span>Watch your Power Bar fill up with every correct answer. ✨</span>
+        </li>
+        <li>
+          <span class="li-dot">★</span>
+          <span>Answer all 15 correctly without losing all 3 lives to earn:
+            <div class="win-pill">🏆 Total Vocabulary Domination 🏆</div>
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <button class="btn-primary" onclick="startGame()">Let's Go! 💖</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     GAME SCREEN
+============================================================ -->
+<div class="screen" id="screen-game">
+
+  <div class="game-header">
+    <div class="game-logo">✨ Vocab Smackdown</div>
+    <div class="progress-badge" id="progress-display">Round 1 / 15</div>
+    <div class="lives-display" id="lives-display"></div>
+  </div>
+
+  <div class="power-bar-wrapper">
+    <div class="power-bar-label">
+      <span>✨ Power</span>
+      <span id="power-pct">0%</span>
+    </div>
+    <div class="power-bar-track">
+      <div class="power-bar-fill" id="power-bar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="question-card" id="question-card">
+    <div class="q-eyebrow">🌸 What term is this?</div>
+    <div class="question-text" id="question-text"></div>
+  </div>
+
+  <div class="choices-grid" id="choices-grid"></div>
+
+  <div class="feedback-msg" id="feedback-msg"></div>
+
+  <div class="next-area">
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Next Round →</button>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     WIN SCREEN
+============================================================ -->
+<div class="screen" id="screen-win">
+  <span class="win-sparkles">🏆✨🌸</span>
+  <div class="win-title">You Won!</div>
+  <div class="win-sub">Total Vocabulary Domination Achieved</div>
+
+  <div class="win-score-card">
+    <div class="win-score-num" id="win-score">15</div>
+    <div class="win-score-label">Words Conquered 💖</div>
+  </div>
+
+  <div class="win-msg" id="win-msg"></div>
+
+  <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+    <button class="btn-primary" onclick="startGame()">Play Again 🌸</button>
+    <button class="btn-outline" onclick="showScreen('screen-title')">Main Menu</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     GAME OVER SCREEN
+============================================================ -->
+<div class="screen" id="screen-gameover">
+  <span class="over-emoji">🥀</span>
+  <div class="over-title">Aw, so close!</div>
+  <div style="font-size:13px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-light);">You ran out of lives</div>
+
+  <div class="card" style="display:inline-block;padding:24px 52px;border-color:rgba(240,112,144,0.35);">
+    <div style="font-family:'Playfair Display',serif;font-weight:900;font-size:56px;color:var(--wrong);" id="gameover-score">0</div>
+    <div style="font-size:11px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-light);">Words before defeat</div>
+  </div>
+
+  <div style="font-size:14px;font-weight:600;color:var(--text-mid);max-width:380px;text-align:center;line-height:1.7;" id="gameover-msg"></div>
+
+  <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+    <button class="btn-primary" onclick="startGame()">Try Again 💪</button>
+    <button class="btn-outline" onclick="showScreen('screen-title')">Main Menu</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL — HOW I BUILT THIS
+============================================================ -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-content">
+    <button class="modal-close-btn" onclick="closeModal()">✕ Close</button>
+
+    <div class="modal-title">How I Built This</div>
+    <div class="modal-byline">
+      By <strong>Anna Katherine Barnett</strong> &nbsp;·&nbsp; Vocab Smackdown · Coding Vocabulary Edition
+    </div>
+
+    <div class="modal-section">
+      <h3>The Concept</h3>
+      <p>Vocab review shouldn't feel like a chore — it should feel like a game with real stakes. I wanted something that would make me <em>want</em> to study. The idea was simple: show a definition, pick the right term from four choices, and protect your three lives. Add a power bar so you always know how close you are to winning, and suddenly vocabulary practice has a heartbeat.</p>
+    </div>
+
+    <div class="modal-divider">🌸 ✨ 🌸</div>
+
+    <div class="modal-section">
+      <h3>The Aesthetic</h3>
+      <p>I went with a soft, pastel-maximalist direction — light teal and blush pink as the core palette, layered with warm cream backgrounds, delicate dot textures, floating gradient blobs, and a custom sparkle cursor. The goal was something that felt beautiful and polished without being overwhelming.</p>
+      <p>Typography is a big part of the personality: <code>Playfair Display</code> brings that elegant, editorial serif energy to the titles and question text, while <code>Nunito</code> keeps everything else rounded and friendly. Together they create a soft-luxury feel that's still readable and functional.</p>
+    </div>
+
+    <div class="modal-divider">🌸 ✨ 🌸</div>
+
+    <div class="modal-section">
+      <h3>The Game Logic</h3>
+      <p>At the start, all 15 words are shuffled randomly. Each round picks the current word's definition as the question, then generates 3 decoy terms from the remaining pool — always unique, never repeating the correct answer as a distractor. The four choices are shuffled so the right answer isn't always in the same spot.</p>
+      <p>A wrong answer deducts a life. A correct answer advances the Power Bar by ~6.67%. Lose all 3 lives and it's Game Over. Answer all 15 before that happens, and you achieve Total Vocabulary Domination. The correct answer is always revealed after a wrong guess, so you learn as you go.</p>
+    </div>
+
+    <div class="modal-divider">🌸 ✨ 🌸</div>
+
+    <div class="modal-section">
+      <h3>Special Touches</h3>
+      <p>A few details I'm proud of: the background uses pure CSS radial gradients layered with a dot texture pseudo-element — no images. The floating blobs animate with a slow <code>blobDrift</code> keyframe. Correct answers fire a burst of colored circles generated dynamically in JavaScript, flying outward in random directions. The card re-triggers its pop animation on every round using a reflow trick (<code>offsetWidth</code>) so the entrance always fires fresh. The custom cursor is an inline SVG data URI — sparkle emoji, zero external files.</p>
+    </div>
+
+    <div class="modal-divider">🌸 ✨ 🌸</div>
+
+    <div class="modal-section">
+      <h3>Tech Stack</h3>
+      <p>One file. No frameworks. No build tools. Just HTML, CSS, and vanilla JavaScript — plus Google Fonts for typography.</p>
+      <div class="tech-pills">
+        <span class="tech-pill pill-pink">HTML5</span>
+        <span class="tech-pill pill-teal">CSS3 Custom Properties</span>
+        <span class="tech-pill pill-gold">Vanilla JavaScript</span>
+        <span class="tech-pill pill-pink">CSS Animations & Keyframes</span>
+        <span class="tech-pill pill-teal">CSS Grid</span>
+        <span class="tech-pill pill-gold">Google Fonts</span>
+        <span class="tech-pill pill-pink">Dynamic Particle System</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Vocab Data ──────────────────────────────────────────────────
+const VOCAB = [
+  { term: "Algorithm",            def: "A step-by-step set of instructions for solving a problem." },
+  { term: "Value",                def: "A specific piece of data a program stores or uses." },
+  { term: "Data Type",            def: "The category of data a value belongs to." },
+  { term: "Number",               def: "A numeric data type used for math calculations." },
+  { term: "String",               def: "A sequence of characters used to represent text." },
+  { term: "Boolean",              def: "A data type with only two possible values: true or false." },
+  { term: "Variable",             def: "A named container in memory that stores a value that can change." },
+  { term: "Assignment Operator",  def: "The = symbol that stores a value into a variable." },
+  { term: "Variable Assignment",  def: "Giving a variable a value." },
+  { term: "List",                 def: "An ordered collection of values stored under a single variable name." },
+  { term: "Element",              def: "A single value stored inside a list." },
+  { term: "Index",                def: "The position number used to access an element in a list, starting at 0." },
+  { term: "Expression",           def: "A combination of values and operators that produces a single result." },
+  { term: "Arithmetic Operators", def: "Symbols that perform math on numbers." },
+  { term: "% (Modulus)",          def: "Returns the remainder left over after division." },
+];
+
+const KEYS = ['A','B','C','D'];
+
+const WIN_MSGS = [
+  "Absolutely flawless! Every definition matched, every term nailed. You are the vocab queen 👑",
+  "15 for 15 — spotless! The entire word list bowed before you. Total domination achieved. 💖",
+  "Clean sweep! Not a single definition slipped past you. Pure vocabulary royalty. ✨",
+];
+
+const OVER_MSGS = [
+  "So close! A little more study and you'll absolutely have it. You've got this! 🌸",
+  "The vocab fought back this round — but you learned something new too. Come back stronger! 💪",
+  "Even queens have to practice. Review your terms and reclaim that crown! 👑",
+];
+
+// ── State ────────────────────────────────────────────────────────
+let shuffled = [], currentIndex = 0, lives = 3, correctCount = 0, answered = false;
+
+// ── Utilities ────────────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function openModal()  { document.getElementById('modal').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeModal() { document.getElementById('modal').classList.remove('open'); document.body.style.overflow = ''; }
+
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ── Particles ────────────────────────────────────────────────────
+function burst(correct) {
+  const container = document.getElementById('particles');
+  const colors = correct
+    ? ['#F9A8C9','#6ECFCF','#F5C842','#5ECFB0','#FFB3D9','#A8E6E6']
+    : ['#F07090','#FFAAAA','#FFB347'];
+
+  for (let i = 0; i < 16; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const angle = Math.random() * 360;
+    const dist  = 70 + Math.random() * 160;
+    const tx = Math.cos(angle * Math.PI / 180) * dist;
+    const ty = Math.sin(angle * Math.PI / 180) * dist - 50;
+    const size  = 6 + Math.random() * 8;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    p.style.cssText = `
+      left: calc(50% + ${(Math.random()-0.5)*180}px);
+      top: 55%;
+      width: ${size}px;
+      height: ${size}px;
+      background: ${color};
+      box-shadow: 0 0 8px ${color};
+      --tx: ${tx}px;
+      --ty: ${ty}px;
+    `;
+    container.appendChild(p);
+    setTimeout(() => p.remove(), 1000);
+  }
+}
+
+// ── Lives ────────────────────────────────────────────────────────
+function renderLives() {
+  const el = document.getElementById('lives-display');
+  el.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const s = document.createElement('span');
+    s.className = 'life-icon' + (i >= lives ? ' lost' : '');
+    s.textContent = '🌸';
+    el.appendChild(s);
+  }
+}
+
+// ── Game Flow ────────────────────────────────────────────────────
+function startGame() {
+  shuffled = shuffle(VOCAB);
+  currentIndex = 0;
+  lives = 3;
+  correctCount = 0;
+  answered = false;
+  showScreen('screen-game');
+  renderLives();
+  loadQuestion();
+}
+
+function loadQuestion() {
+  answered = false;
+  const q = shuffled[currentIndex];
+  const total = shuffled.length;
+
+  document.getElementById('progress-display').textContent = `Round ${currentIndex + 1} / ${total}`;
+
+  // Power bar
+  const pct = Math.round((correctCount / total) * 100);
+  document.getElementById('power-bar').style.width = pct + '%';
+  document.getElementById('power-pct').textContent = pct + '%';
+
+  // Retrigger card animation
+  const card = document.getElementById('question-card');
+  card.style.animation = 'none';
+  void card.offsetWidth;
+  card.style.animation = 'cardPop 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+
+  document.getElementById('question-text').textContent = `"${q.def}"`;
+
+  // Build choices
+  const others = shuffled.filter((_, i) => i !== currentIndex);
+  const distractors = shuffle(others).slice(0, 3).map(v => v.term);
+  const choices = shuffle([q.term, ...distractors]);
+
+  const grid = document.getElementById('choices-grid');
+  grid.innerHTML = '';
+  choices.forEach((term, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.dataset.term = term;
+    btn.innerHTML = `<span class="choice-key">${KEYS[i]}</span><span>${term}</span>`;
+    btn.addEventListener('click', () => selectAnswer(term, q.term));
+    grid.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback-msg');
+  fb.textContent = '';
+  fb.className = 'feedback-msg';
+  document.getElementById('btn-next').classList.remove('visible');
+}
+
+function selectAnswer(chosen, correct) {
+  if (answered) return;
+  answered = true;
+
+  const buttons = document.querySelectorAll('.choice-btn');
+  const isCorrect = chosen === correct;
+
+  buttons.forEach(btn => {
+    btn.disabled = true;
+    if (btn.dataset.term === correct) {
+      btn.classList.add(isCorrect ? 'correct' : 'reveal');
+    } else if (btn.dataset.term === chosen && !isCorrect) {
+      btn.classList.add('wrong');
+    }
+  });
+
+  const fb = document.getElementById('feedback-msg');
+
+  if (isCorrect) {
+    correctCount++;
+    fb.textContent = ['Correct! ✨', 'Yes! 💖', 'Nailed it! 🌸', 'Perfect! ⭐'][Math.floor(Math.random()*4)];
+    fb.className = 'feedback-msg correct';
+    burst(true);
+
+    const pct = Math.round((correctCount / shuffled.length) * 100);
+    document.getElementById('power-bar').style.width = pct + '%';
+    document.getElementById('power-pct').textContent = pct + '%';
+  } else {
+    lives--;
+    renderLives();
+    fb.textContent = ['Not quite! 🥀', 'Wrong 😢', 'Oops! 🌧️', 'Try again! 💦'][Math.floor(Math.random()*4)];
+    fb.className = 'feedback-msg wrong';
+    burst(false);
+  }
+
+  // Game over?
+  if (lives <= 0) {
+    setTimeout(() => {
+      document.getElementById('gameover-score').textContent = correctCount;
+      document.getElementById('gameover-msg').textContent = OVER_MSGS[Math.floor(Math.random() * OVER_MSGS.length)];
+      showScreen('screen-gameover');
+    }, 1400);
+    return;
+  }
+
+  // Last question?
+  if (currentIndex === shuffled.length - 1) {
+    setTimeout(() => {
+      document.getElementById('win-score').textContent = correctCount;
+      document.getElementById('win-msg').textContent = WIN_MSGS[Math.floor(Math.random() * WIN_MSGS.length)];
+      showScreen('screen-win');
+    }, 1400);
+    return;
+  }
+
+  document.getElementById('btn-next').classList.add('visible');
+}
+
+function nextQuestion() {
+  currentIndex++;
+  loadQuestion();
+}
+
+// ── Keyboard shortcuts ───────────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  const key = e.key.toUpperCase();
+  if (['A','B','C','D'].includes(key)) {
+    const idx = KEYS.indexOf(key);
+    const btns = document.querySelectorAll('.choice-btn');
+    if (btns[idx] && !btns[idx].disabled) btns[idx].click();
+  }
+  if (e.key === 'Enter') {
+    const nb = document.getElementById('btn-next');
+    if (nb.classList.contains('visible')) nextQuestion();
+  }
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>
